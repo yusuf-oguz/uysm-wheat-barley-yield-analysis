@@ -1,0 +1,307 @@
+UYSM PROJESI - HATALI / SORUNLU VERI RAPORU
+Guncelleme tarihi: 2026-04-01
+Hazirlayan: Yusuf Oguz  |  Veri analiz sureci: Claude + Python
+============================================================
+
+Bu dosya analize dahil edilmeyen veya duzeltme yapilarak dahil edilen
+tum kayitlari ve sorun nedenlerini belgeler.
+
+Ana CSV: UYSM_merged.csv
+Filtreleme sutunu: analiz_durumu
+Analiz filtresi: analize_dahil == True  (239 kayit)
+
+OZET TABLOSU:
+  kullanilabilir   : 219 kayit  (analize dahil)
+  duzeltilmis      : 20 kayit   (analize dahil, duzeltilmis degerler kullanilacak)
+  koordinat_disi   : 44 kayit   (analize dahil degil)
+  koordinat_yok    : 4 kayit    (analize dahil degil)
+  veri_hatasi      : 4 kayit    (analize dahil degil)
+  TOPLAM           : 291 kayit
+
+
+============================================================
+BOLUM 1: HESAP HATASI - duzeltilmis (20 kayit)
+============================================================
+
+Bu kayitlarin dane agirlik hesabi Excel'de yanlis uretilmistir.
+Ham veri (satirlar 29-38) saglamdir, degerler buradan yeniden
+hesaplanarak "duzeltilmis_hesap_gram" ve "duzeltilmis_gercek_gram"
+sutunlarina yazilmistir. Analizde bu sutunlar kullanilacaktir.
+
+--------------------------------------------------------------
+1A. E39 SABIT 948 HATASI (12 kayit)
+--------------------------------------------------------------
+
+ACIKLAMA:
+Her xlsx dosyasinda satirlar 29-38 arasindasindaki 10 basak
+olcumunun toplami E39 hucresine =SUM(E29:E38) formuluyle
+otomatik hesaplanmali. Bu 12 dosyada E39 sabit deger olan
+948 olarak kalip formule donusturulmemis. Buyuk ihtimalle
+0103 sablonundan kopyalanirken olusan hata.
+
+SONUC: xls_hesap_gram degerleri gercek degerden 10-25 kat
+kucuk cikmaktadir.
+
+  Dosya                 | Istasyon | Tarih      | Sehir     | XLS hesap | Duzeltilmis
+  ----------------------|----------|------------|-----------|-----------|------------
+  1005 10km 283.xlsx    | 10.05    | 2016-06-18 | Izmir     |     50.81 |    1131.17
+  1005 700m 288.xlsx    | 10.05    | 2016-06-18 | Izmir     |     27.30 |    1019.36
+  1603 1km 287.xlsx     | 16.03    | 2016-06-16 | Bursa     |     54.60 |    1552.26
+  1603 250m 300.xlsx    | 16.03    | 2016-06-16 | Bursa     |     31.09 |     694.05
+  1604 7.4km 298.xlsx   | 16.04    | 2016-06-16 | Bursa     |     99.35 |    2350.66
+  1606 400m 297.xlsx    | 16.06    | 2016-06-16 | Balikesir |     43.99 |    1129.28
+  1703 100m 282.xlsx    | 17.03    | 2016-06-17 | Canakkale |     37.92 |     876.84
+  1704 12km 274.xlsx    | 17.04    | 2016-06-17 | Canakkale |     27.30 |     390.79
+  1705 3km 299.xlsx     | 17.05    | 2016-06-17 | Canakkale |     55.36 |    1736.12
+  1707 240m 285.xlsx    | 17.07    | 2016-06-17 | Balikesir |     22.75 |     607.15
+  1707 80m 284.xlsx     | 17.07    | 2016-06-17 | Balikesir |     27.30 |     814.09
+  1707 9.4km 286.xlsx   | 17.07    | 2016-06-17 | Canakkale |     49.30 |     919.57
+
+NOT: 0103 291, 0103 3km, 0103 7km dosyalari da ayni E39=948
+hatasini tasimaktadir ancak koordinatlari Turkiye siniri disina
+dustugu icin zaten analize dahil edilmemistir (bkz. Bolum 2A).
+
+--------------------------------------------------------------
+1B. VERI KALITESI NOTU - 01118 6 .xlsx (hata degil, gozlem)
+--------------------------------------------------------------
+
+ACIKLAMA:
+Bu dosyada E39 hucresinde dogru formul (=SUM(E29:E38)) mevcuttur
+ve hesap dogrulama scriptimiz %4.6 uyumsuzluk isaretledi. Ancak
+ardindan yapilan detayli incelemede su tespit edildi:
+
+  - 10. basak satirinda (satir 38) E38 degeri kayitli (731 mg)
+  - Ancak C38 (basak boyu) ve D38 (basak agirlik) bos birakilmis
+  - Scriptimiz "if c and d and e" sartini kullandigi icin satir 38'i
+    saymadi ve bizim toplamimiz 9 basak uzerinden hesaplandi
+  - Excel E39 formulu =SUM(E29:E38) oldugu icin E38'i dogru sekilde
+    dahil etti — spreadsheet DOGRUYDU
+
+SONUC: Spreadsheet hesabi dogruydu, script hatasi yuzunden yanlis
+isaretlenmis. Analiz_durumu "kullanilabilir" olarak guncellendi.
+duzeltme_notu: "Basak 10 (satir 38) E stununda kucas agirlik var
+ancak C ve D bos; E39 formulu dogru, kullanilabilir."
+
+  Dosya          | Istasyon | Tarih      | Sehir | XLS hesap | Aciklama
+  ---------------|----------|------------|-------|-----------|-------------------------------
+  01118 6 .xlsx  | 01.11    | 2016-05-18 | Adana |    961.52 | Dogru hesap, script false positive
+
+--------------------------------------------------------------
+1C. 9 BASAK VERISI (10 YERINE) HATASI (8 kayit)
+--------------------------------------------------------------
+
+ACIKLAMA:
+Olcum protokolu 10 basak gercektir. Bu 8 dosyada satirlar
+29-38 arasinda yalnizca 9 satir dolu. Excel hesabinda bolme
+her zaman 10 uzerinden yapildigi icin ortalama %11 kucuk
+cikmaktadir. Duzeltmede gercek dolu satir sayisi (9) kullanildi.
+
+  Dosya                | Istasyon | Tarih      | Sehir     | Bitki  | XLS hesap | Duzeltilmis
+  ---------------------|----------|------------|-----------|--------|-----------|------------
+  2104 300m 256.xlsx   | 21.04    | 2016-06-03 | Diyarbakir| bugday |   1420.36 |    1578.18
+  2105 255.xlsx        | 21.05    | 2016-06-03 | Mardin    | arpa   |   1578.18 |    1753.53
+  2703 159.xlsx        | 27.03    | 2016-05-24 | Gaziantep | bugday |    548.21 |     609.12
+  4507 1.5 km 40.xlsx  | 48.07    | 2016-05-23 | Izmir     | bugday |    135.86 |     150.95
+  4507 2km 120.xlsx    | 4507     | 2016-05-28 | Izmir     | bugday |     47.22 |      52.47
+  4803 44.xlsx         | 48.03    | 2016-05-22 | Mugla     | bugday |    669.10 |     743.45
+  6309 3km 21.xlsx     | 63.09    | 2016-05-24 | Sanliurfa | bugday |   1321.94 |    1468.82
+  6322 3km 214.xlsx    | 63.22    | 2016-05-27 | Sanliurfa | bugday |    417.70 |     464.11
+
+
+============================================================
+BOLUM 2: KOORDINAT SORUNLARI - koordinat_disi (44 kayit)
+============================================================
+
+--------------------------------------------------------------
+2A. ACIKCA IMKANSIZ KOORDINATLAR (5 kayit)
+--------------------------------------------------------------
+
+Bu koordinatlar Turkiye ile cografik olarak hicbir baglantisi
+olmayan bolgelerdir. Veri girisinde ciddi hata yapilmistir.
+
+  Dosya              | Istasyon | Enlem   | Boylam  | Dusen Bolge
+  -------------------|----------|---------|---------|---------------------------
+  0904 67.xlsx       | 09.04    |  31.54  |  28.34  | Misir / Libya sahili
+  1006 276.xlsx      | 10.06    |  54.20  |  28.08  | Rusya (Moskova yakin)
+  2113 250.xlsx      | 21.13    |  37.52  |  48.39  | Iran (Hazar Denizi kisisi)
+  4703 800m 249.xlsx | 47.03    |  37.52  |  48.39  | Iran (2113 ile ayni)
+  6335 3km 224.xlsx  | 63.35    |  27.16  |  38.93  | Suudi Arabistan / Afrika
+
+--------------------------------------------------------------
+2B. AKDENIZ VE EGE KIYISI KOORDINATLARI (23 kayit)
+--------------------------------------------------------------
+
+Bu koordinatlar Turkiye kara sinirinin hemen aciginda denize
+dusmektedir. 11 km buffer ile de yakalanamadi. Koordinatlar
+muhtemelen yanlis girilmis ya da GPS sahilde kiyiya cok
+yakin alinmistir. Dane agirlik verileri mevcut.
+
+  [Adana / Mersin - Akdeniz kisisi]
+  Dosya                    | Istasyon | Enlem   | Boylam
+  -------------------------|----------|---------|-------
+  0102 1km 192.xlsx        | 01.02    |  36.48  |  35.16
+  0102 75m 187.xlsx        | 01.02    |  36.48  |  35.17
+  0102 7km 215.xlsx        | 01.02    |  36.46  |  35.43
+  0103 291.xlsx            | 01.03    |  36.43  |  35.15
+  0103 3km 289.xlsx        | 01.03    |  36.43  |  35.15
+  0103 7km 211.xlsx        | 01.03    |  36.43  |  35.16
+  0104 1.5km 189.xlsx      | 01.04    |  36.49  |  35.14
+  0104 1km irmakbasi.xlsx  | 01.04    |  36.50  |  35.14
+  0104 4km 156.xlsx        | 01.04    |  36.49  |  35.16
+  0107 1km 210.xlsx        | 01.07    |  36.40  |  35.20
+  0107 2.5km 203.xlsx      | 01.07    |  36.40  |  35.21
+  0110 750m 200.xlsx       | 01.10    |  36.53  |  34.57
+  3301 1km 294.xlsx        | 33.01    |  36.55  |  35.00
+  3301 205.xlsx            | 33.01    |  36.54  |  35.01
+  3302 7km 234.xlsx        | 33.02    |  36.53  |  34.49
+  3304 500m 199.xlsx       | 33.04    |  36.53  |  34.57
+  3304 6km 144.xlsx        | 33.04    |  36.53  |  34.58
+  33041 1.5km 185.xlsx     | 33.04    |  36.54  |  34.57
+  3305 292.xlsx            | 33.05    |  36.46  |  34.59
+  3305 4.3km 202.xlsx      | 33.05    |  36.46  |  34.58
+
+  [Ege kisisi - Mugla]
+  Dosya              | Istasyon | Enlem   | Boylam
+  -------------------|----------|---------|-------
+  4802 250m 35.xlsx  | 4802     |  36.45  |  28.47
+  4806 100m 31.xlsx  | 4806     |  36.58  |  28.41
+  4806 30.xlsx       | 4806     |  36.54  |  28.42
+
+--------------------------------------------------------------
+2C. SURIYE SINIRI OTESI KOORDINATLAR (16 kayit)
+--------------------------------------------------------------
+
+Bu koordinatlar 36.2-36.6 N enleminde, Gaziantep / Hatay /
+Sanliurfa guceyine dusmektedir. Turkiye'nin guney siniri bu
+bolgelerde yaklasik 36.8-37.0 N'dir. Koordinatlar Suriye
+topraklarina tasmaktadir.
+
+  [Gaziantep gucey]
+  Dosya                  | Istasyon | Enlem   | Boylam
+  -----------------------|----------|---------|-------
+  2708 147.xlsx          | 27.08    |  36.47  |  37.34
+  2708 3km 220.xlsx      | 27.08    |  36.46  |  37.33
+  2709 100m 196.xlsx     | 27.09    |  36.46  |  37.34
+  2709 100m 201.xlsx     | 27.09    |  36.48  |  37.34
+  2709 2.5km 146.xlsx    | 27.09    |  36.46  |  37.35
+  2711 50m 158.xlsx      | 27.11    |  36.49  |  37.20
+  2712 3km 231.xlsx      | 27.12    |  36.52  |  37.12
+
+  [Hatay gucey]
+  Dosya                  | Istasyon | Enlem   | Boylam
+  -----------------------|----------|---------|-------
+  3102 1.5km 194.xlsx    | 31.02    |  36.46  |  37.34
+  3108 1.5km 197.xlsx    | 31.08    |  36.25  |  35.58
+  3108 3.5km 204.xlsx    | 31.08    |  36.25  |  35.59
+  3108 4.5km 178.xlsx    | 31.08    |  36.28  |  35.57
+
+  [Sanliurfa gucey]
+  Dosya                  | Istasyon | Enlem   | Boylam
+  -----------------------|----------|---------|-------
+  6316 290 2km.xlsx      | 63.16    |  36.54  |  38.55
+  6319 293.xlsx          | 63.19    |  36.43  |  38.54
+  6330 1km 232.xlsx      | 63.30    |  36.52  |  37.12
+  6332 2km 295.xlsx      | 63.32    |  36.57  |  38.28
+  6333 296.xlsx          | 63.33    |  36.57  |  38.28
+
+
+============================================================
+BOLUM 3: KOORDINAT YOK - koordinat_yok (4 kayit)
+============================================================
+
+Excel dosyasinda koordinat hucreleri bos birakilmistir.
+
+  Dosya                  | Istasyon | Tarih
+  -----------------------|----------|----------
+  0203 1 km 2.xlsx       | -        | -         (koordinat hucresi metin iceriyor)
+  1601 243 (bos).xlsx    | 16.01    | 2016-06-17
+  3501 1.6km 62.xlsx     | 35.07    | 2016-05-22
+  4802 1.6km 61.xlsx     | 48.02    | 2016-05-21
+
+
+============================================================
+BOLUM 4: SABLON / ORNEK DOSYA - veri_hatasi (1 kayit)
+============================================================
+
+  Dosya          | Aciklama
+  ---------------|--------------------------------------------------
+  Ornek .xlsx    | Sablon / ornek dosyasi, gercek olcum icermemekte
+
+
+============================================================
+BOLUM 5: C41 TARLA TARTIMI TUTARSIZLIGI - veri_hatasi (3 kayit)
+============================================================
+
+Bu kayitlarda C41 hucresindeki tarla tartim degeri, ayni dosyadaki
+bireysel basak olcumlerinden beklenen degerle 7x veya daha fazla
+tutarsiz. Hesap (C21) ve Gercek (D21) yontemleri arasinda da ayni
+oranda buyuk fark var.
+
+ACIKLAMA:
+GERCEK yonteminin formulü: C41 × (ort_dane / ort_kilcikli) × olcek / 1000
+Beklenen C41 ≈ basak_sayisi × ort_kilcikli_agirlik
+Bu 3 dosyada C41, beklenen degerden ~7x yuksek geliyor. Buyuk
+ihtimalle C41, olcum karesi degil daha buyuk bir tarla alanından
+tartilmis olup formule yanlis uyan bir deger icerir.
+
+Daha kucuk ihtimal: birimlerin karistirilmis olmasi (gram/mg gibi).
+
+Her iki durumda da GERCEK degerleri guvensizdir ve HESAP
+degerleriyle de cok buyuk uyumsuzluk vardir. Analizden cikarildi.
+Ileride kaynak Excel incelenerek C41'in hangi alanı temsil ettigii
+netlestirilirse yeniden dahil edilebilir.
+
+  Dosya               | Istasyon | Sehir     | C41 (mg)   | Beklenen C41 | HESAP  | GERCEK
+  --------------------|----------|-----------|------------|--------------|--------|--------
+  0902 1km 43.xlsx    | 09.02    | Aydin     | 1.047.225  |  ~141.000    | 1792.1 | 13298.0
+  6309 23,.xlsx       | 63.09    | Sanliurfa | 3.481.185  |  ~505.000    | 1505.3 | 10362.1
+  3106 8km 155.xlsx   | 31.06    | Hatay     |   656.254  |   ~95.000    |  818.8 |  7484.9
+
+
+============================================================
+BOLUM 6: ISTASYON KODU TUTARSIZLIKLARI - veri_kalitesi_notu
+============================================================
+
+Bu kayitlar analize dahil edilmistir (analize_dahil = True).
+Ancak istasyon_no sütunundaki il kodu ile koordinatin gosterdigi
+il arasinda komsu il siniri ile aciklanamayacak buyuk uyumsuzluk
+vardir. Istasyon kodunun veri girisinde yanlis yazilmis olmasi
+kuvvetle muhtemeldir. Koordinat verileri daha guvenilir gorunmektedir.
+
+--------------------------------------------------------------
+6A. ISTASYON KODU BUYUK IHTIMALLE YANLIS GIRILMIS (2 kayit)
+--------------------------------------------------------------
+
+Bu kayitlarda dosya adi, koordinat ve istasyon kodu uclu olarak
+incelendiginde istasyon kodunun uyumsuz oldugu gorulmektedir.
+
+  Dosya                | Istasyon | Il (istasyon) | Koordinat ili  | Not
+  ---------------------|----------|---------------|----------------|----------------------------
+  3507 6km 112.xlsx    | 38.07    | Kayseri (38)  | Izmir          | Dosya adi 35xx (Izmir);
+                       |          |               |                | istasyon kodu 35.07 olmali
+  0905 2km 75.xlsx     | 20.01    | Denizli (20)  | Aydin / Mugla  | Dosya adi 09xx (Aydin);
+                       |          |               |                | istasyon kodu 09.05 olmali
+
+--------------------------------------------------------------
+6B. KOORDINAT VEYA ISTASYON KODU TUTARSIZ (2 kayit)
+--------------------------------------------------------------
+
+Bu kayitlarda istasyon kodu ile koordinat arasindaki mesafe
+cok buyuktur ve dosya adi da netlik saglamaz. Koordinat ve
+istasyon kodundan hangisinin dogru oldugu belirlenemedi.
+Analize dahil edilmistir ancak il atamasi guvenilir degildir.
+
+  Dosya            | Istasyon | Il (istasyon) | Koordinat ili | Enlem    | Boylam
+  -----------------|----------|---------------|---------------|----------|--------
+  0104 92.xlsx     | 01.04    | Adana (01)    | Mugla / Aydin | 37.53    | 28.34
+  6333 2km 50.xlsx | 63.33    | Sanliurfa(63) | Erzincan      | 39.95    | 38.46
+
+
+============================================================
+SON NOT
+============================================================
+
+Koordinat sorunlari (Bolum 2 ve 3) veri saglayici tarafindan
+duzeltilirse bu kayitlar "analize_dahil" sutunu True yapilarak
+analize eklenebilir. Hesap hatalari (Bolum 1) zaten duzeltilerek
+"duzeltilmis_hesap_gram" sutununa yazilmistir.

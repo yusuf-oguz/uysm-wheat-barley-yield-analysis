@@ -1,0 +1,254 @@
+{
+  "_meta": {
+    "aciklama": "hansay_processed_v7.0 icin gecerli formul referansi.",
+    "tolerans": 0.01,
+    "kapsam": "vld_genel=True ve bitki_adi=bugday olan satirlar (639 adet)",
+    "versiyon": "v7.0",
+    "onemli_degisiklik": "v6.x outlier analizinde bazi b1-b10 degerler null yapildi. Bu nedenle ortalama formulleri artik sabit /10 yerine mean(skipna=True) kullanir — gecerli deger sayisina gore boler (9 deger varsa 9a, 8 varsa 8e vb)."
+  },
+
+  "grup_A_sap_boyu": {
+    "aciklama": "b1-b10 toplam sap boyu = sap ust + sap alt",
+    "formüller": [
+      {
+        "hedef": "bN_sap_boy_cm__JXX",
+        "formul": "bN_sap_basak_boyu_cm__HXX + bN_sap_alt_cm__IXX",
+        "N_araligi": "1-10",
+        "XX_araligi": "29-38",
+        "durum": "TEMIZ"
+      }
+    ]
+  },
+
+  "grup_B_toplamlar": {
+    "aciklama": "10 basak ham olcumlerinin toplamlari",
+    "formüller": [
+      {
+        "hedef": "toplam_basak_uzunluk__B39",
+        "formul": "SUM(b1_uzunluk_cm__B29 : b10_uzunluk_cm__B38)",
+        "durum": "TEMIZ"
+      },
+      {
+        "hedef": "toplam_basak_agirlik_mg__C39",
+        "formul": "SUM(b1_agirlik_mg__C29 : b10_agirlik_mg__C38)",
+        "durum": "TEMIZ"
+      },
+      {
+        "hedef": "toplam_dane_sayisi__D39",
+        "formul": "SUM(b1_dane_sayisi__D29 : b10_dane_sayisi__D38)",
+        "durum": "TEMIZ"
+      },
+      {
+        "hedef": "toplam_dane_agirlik_mg__E39",
+        "formul": "SUM(b1_dane_agirlik_mg__E29 : b10_dane_agirlik_mg__E38)",
+        "durum": "TEMIZ"
+      }
+    ]
+  },
+
+  "grup_C_ortalamalar": {
+    "aciklama": "b1-b10 ham verilerinden hesaplanan ortalamalar. v6.x outlier analizinden sonra bazi hucreler null yapildi — artik sabit /10 degil, mean(skipna=True) kullanilir.",
+    "onemli_not": "mean(skipna=True): pandas .mean(axis=1, skipna=True) — null hucreler atlanir, gercerli deger sayisina gore boler. Ornegin 9 gecerli deger varsa /9, 8 varsa /8.",
+    "formüller": [
+      {
+        "hedef": "ort_basak_uzunluk_cm__B40",
+        "formul": "mean(b1_uzunluk_cm__B29 : b10_uzunluk_cm__B38, skipna=True)",
+        "durum": "GUNCELLENDI"
+      },
+      {
+        "hedef": "ort_basak_agirlik_mg__C40",
+        "formul": "mean(b1_agirlik_mg__C29 : b10_agirlik_mg__C38, skipna=True)",
+        "durum": "GUNCELLENDI"
+      },
+      {
+        "hedef": "ort_dane_sayisi__D40",
+        "formul": "mean(b1_dane_sayisi__D29 : b10_dane_sayisi__D38, skipna=True)",
+        "durum": "GUNCELLENDI"
+      },
+      {
+        "hedef": "ort_dane_agirlik_mg__E40",
+        "formul": "mean(b1_dane_agirlik_mg__E29 : b10_dane_agirlik_mg__E38, skipna=True)",
+        "durum": "GUNCELLENDI"
+      },
+      {
+        "hedef": "ort_sap_basak_boyu__H39",
+        "formul": "mean(b1_sap_basak_boyu_cm__H29 : b10_sap_basak_boyu_cm__H38, skipna=True)",
+        "durum": "GUNCELLENDI"
+      },
+      {
+        "hedef": "ort_sap_basak_alti_boyu__I39",
+        "formul": "mean(b1_sap_alt_cm__I29 : b10_sap_alt_cm__I38, skipna=True)",
+        "durum": "GUNCELLENDI"
+      },
+      {
+        "hedef": "ort_sap_boy_cm__J39",
+        "formul": "mean(b1_sap_boy_cm__J29 : b10_sap_boy_cm__J38, skipna=True)",
+        "durum": "GUNCELLENDI"
+      }
+    ]
+  },
+
+  "grup_D_copy_ozet": {
+    "aciklama": "Diger sutunlarin kopyasi veya basit turetmesi olan ozet sutunlar",
+    "not": "C18/C19/C23/C24 copy sutunlardir; C20/C22/D41 birim donusumu veya oran",
+    "formüller": [
+      {
+        "hedef": "ort_kilcikli_basak_agirlik_mg__C18",
+        "formul": "ort_basak_agirlik_mg__C40",
+        "aciklama": "C40 kopyasi (dane+sap ortalama basak agirlik, mg)",
+        "durum": "TEMIZ"
+      },
+      {
+        "hedef": "ort_dane_sayisi_copy__C19",
+        "formul": "ort_dane_sayisi__D40",
+        "aciklama": "D40 kopyasi",
+        "durum": "TEMIZ"
+      },
+      {
+        "hedef": "bir_basaktaki_ort_dane_agirlik_gram__C20",
+        "formul": "ort_dane_agirlik_mg__E40 / 1000",
+        "aciklama": "E40'in gram cinsine cevrimi",
+        "durum": "TEMIZ",
+        "duzeltme_notu": "8 satir v4.9'da duzeltildi — E40 daha once guncellenmisti, C20 kalmisti"
+      },
+      {
+        "hedef": "bin_dane_agirlik_gram__C22",
+        "formul": "ort_dane_agirlik_mg__E40 / ort_dane_sayisi__D40",
+        "aciklama": "Tek dane agirlik mg (isim yaniltici — bin dane degil, tek dane)",
+        "durum": "TEMIZ",
+        "duzeltme_notu": "7 satir v4.9'da duzeltildi"
+      },
+      {
+        "hedef": "ort_sap_boy_cm_copy__C23",
+        "formul": "ort_sap_boy_cm__J39",
+        "aciklama": "J39 kopyasi",
+        "durum": "TEMIZ"
+      },
+      {
+        "hedef": "ort_basak_uzunluk_cm_copy__C24",
+        "formul": "ort_basak_uzunluk_cm__B40",
+        "aciklama": "B40 kopyasi",
+        "durum": "TEMIZ"
+      },
+      {
+        "hedef": "basak_dane_oran__D41",
+        "formul": "ort_dane_agirlik_mg__E40 / ort_basak_agirlik_mg__C40",
+        "aciklama": "Dane orani: basak agirliginin ne kadari dane",
+        "durum": "TEMIZ"
+      }
+    ]
+  },
+
+  "grup_E_alan_verim": {
+    "aciklama": "Olcum alani olceklemesi ve iki farkli verim hesap zinciri",
+    "formüller": [
+      {
+        "hedef": "m2_basak_sayisi__C12",
+        "formul": "olcum_alani_basak__C11 * olcum_alani_carpani__E13",
+        "aciklama": "1 m2'deki basak sayisi",
+        "durum": "TEMIZ"
+      },
+      {
+        "hedef": "m2_basaksiz_bitki__C14",
+        "formul": "basaksiz_bitki_sayisi__C13 * olcum_alani_carpani2__E14",
+        "aciklama": "1 m2'deki basaksiz bitki sayisi",
+        "durum": "TEMIZ"
+      },
+      {
+        "hedef": "m2_toplam_bitki__C15",
+        "formul": "m2_basak_sayisi__C12 + m2_basaksiz_bitki__C14",
+        "aciklama": "1 m2'deki toplam bitki sayisi",
+        "durum": "TEMIZ"
+      },
+      {
+        "hedef": "dane_m2_hesap_gram__C21",
+        "formul": "bir_basaktaki_ort_dane_agirlik_gram__C20 * m2_basak_sayisi__C12",
+        "aciklama": "Basak sayisi bazli 1 m2 dane verimi (gram) — sayim hatasina duyarli",
+        "durum": "TEMIZ",
+        "not": "Bazi Excel dosyalarinda =E41*E14 formulu kullanilmis (yanlis); biz C20*C12 uzerinden gidiyoruz"
+      },
+      {
+        "hedef": "olcum_basak_dane_agirlik_hesap__E41",
+        "formul": "olcum_basak_agirlik_ham__C41 * basak_dane_oran__D41",
+        "aciklama": "Olcum alanindaki dane agirlik tahmini (mg)",
+        "durum": "TEMIZ"
+      },
+      {
+        "hedef": "dane_m2_tartim_hesap__E42",
+        "formul": "olcum_basak_dane_agirlik_hesap__E41 * olcum_alani_carpani2__E14",
+        "aciklama": "1 m2'deki dane agirlik tartim tahmini (mg)",
+        "durum": "TEMIZ",
+        "not": "Bazi Excel dosyalarinda E13 veya E14*E43 kullanilmis; biz E14 uzerinden gidiyoruz"
+      },
+      {
+        "hedef": "dane_m2_gercek_gram__D21",
+        "formul": "dane_m2_tartim_hesap__E42 / 1000",
+        "aciklama": "Tartim bazli 1 m2 dane verimi (gram) — tartim hatasina duyarli",
+        "durum": "TEMIZ"
+      }
+    ]
+  },
+
+  "grup_F_sap_agirlik": {
+    "aciklama": "10 basagin sap agirlik zinciri. NOT: on_sap_agirlik_mg__J41, on_basaktaki_toplam_sap_agirlik_mg__C16, on_basak_sap_agirlik_ham__J24, on_basak_sap_agirlik_sum__J25 sutunlari v5.0da cikarildi. m2_sap_agirlik_kg__C17 artik guncellenemiyor (kaynak yok).",
+    "formüller": [
+      {
+        "hedef": "on_sap_agirlik_mg__J41",
+        "formul": "on_basak_sap_agirlik_sum__J25",
+        "aciklama": "10 basagin sap agirlik toplami (mg)",
+        "durum": "TEMIZ",
+        "not": "Bazi Excel dosyalarinda =J24 kullanilmis; biz J25 uzerinden gidiyoruz"
+      },
+      {
+        "hedef": "on_basaktaki_toplam_sap_agirlik_mg__C16",
+        "formul": "on_sap_agirlik_mg__J41",
+        "aciklama": "J41 kopyasi",
+        "durum": "TEMIZ"
+      },
+      {
+        "hedef": "m2_sap_agirlik_kg__C17",
+        "formul": "(on_basaktaki_toplam_sap_agirlik_mg__C16 / 10000) * (m2_basak_sayisi__C12 / 1000)",
+        "aciklama": "1 m2'deki sap agirlik (kg)",
+        "durum": "TEMIZ",
+        "duzeltme_notu": "11 satir v4.9'da duzeltildi — Excel'de C16 yanlis sabit degerle hesaplanmisti"
+      }
+    ]
+  },
+
+  "ham_sutunlar": {
+    "aciklama": "Hicbir formul uygulanmayan, dogrudan olculen veya elle girilen degerler",
+    "sutunlar": [
+      {"sutun": "olcum_alani_basak__C11", "aciklama": "Olcum alanindaki basak sayisi (elle sayim)"},
+      {"sutun": "basaksiz_bitki_sayisi__C13", "aciklama": "Basaksiz bitki sayisi (elle sayim); 0 meşru deger"},
+      {"sutun": "olcum_alani_carpani__E13", "aciklama": "Alan carpani: 4=1/4m2, 8=1/8m2, 16=1/16m2"},
+      {"sutun": "olcum_alani_carpani2__E14", "aciklama": "E13 ile her zaman esit (dogrulanmis)"},
+      {"sutun": "olcum_basak_agirlik_ham__C41", "aciklama": "Olcum alanindaki tum basaklarin lab tartim agirlik (mg); formulsuz, elle girilmis"},
+      {"sutun": "on_basak_sap_agirlik_ham__J24", "aciklama": "10 basagin sap agirlik ham (mg); elle girilmis"},
+      {"sutun": "on_basak_sap_agirlik_sum__J25", "aciklama": "J24'u toplayan formul; pratikte J24 ile esit"},
+      {"sutun": "bN_uzunluk_cm__BXX", "aciklama": "N. basagin uzunlugu (cm); N=1-10, XX=29-38"},
+      {"sutun": "bN_agirlik_mg__CXX", "aciklama": "N. basagin toplam agirlik (mg)"},
+      {"sutun": "bN_dane_sayisi__DXX", "aciklama": "N. basaktaki dane sayisi"},
+      {"sutun": "bN_dane_agirlik_mg__EXX", "aciklama": "N. basaktaki toplam dane agirlik (mg)"},
+      {"sutun": "bN_sap_basak_boyu_cm__HXX", "aciklama": "N. basagin basak boyu / sap ustu (cm)"},
+      {"sutun": "bN_sap_alt_cm__IXX", "aciklama": "N. basagin sap alti boyu (cm)"}
+    ]
+  },
+
+  "bilinen_isim_hatalari": {
+    "aciklama": "CSV sutun isimleri yaniltici olsa da degerler dogrudur",
+    "hatalar": [
+      {
+        "sutun": "ort_kilcikli_basak_agirlik_mg__C18",
+        "sorun": "Isimde 'kilcikli' var ama bu kilcikli/kilciksiz ayrimi degil; tum basak agirlik ortalamasidir (C40 kopyasi)"
+      },
+      {
+        "sutun": "bin_dane_agirlik_gram__C22",
+        "sorun": "Isim 'bin dane agirlik gram' ama aslinda TEK DANE agirlik (mg cinsinden); 1000 dane gram = 1 dane mg esitligi nedeniyle deger ayni"
+      },
+      {
+        "sutun": "basaksiz_bitki_carpani__E14",
+        "sorun": "Isimde 'basaksiz' var ama bu alan carpanidir (E13 ile esit)"
+      }
+    ]
+  }
+}

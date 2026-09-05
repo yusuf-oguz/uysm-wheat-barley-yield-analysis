@@ -1,0 +1,6 @@
+# Byte-birebir doğrulanmış yedek zip'ler (bkz. README "Bilinen Fazlalık Dosyalar") — silinmedi, sadece git dışı
+01_ilk_pipeline/data/processed/Koordinati Hatali Veriler.zip
+
+__pycache__/
+*.pyc
+.venv/

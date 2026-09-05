@@ -1,0 +1,17 @@
+﻿sutun,label,n,enlem_r,enlem_p,boylam_r,boylam_p,enlem_sig,boylam_sig
+basak_dane_oran__D41,Dane Orani (D41),603,0.161,0.0001,-0.021,0.6017,False,False
+ort_dane_sayisi__D40,Ort. Dane Sayisi,617,-0.123,0.0022,-0.13,0.0012,False,False
+dane_m2_gercek_gram__D21,D21 Verim (g/m²),608,-0.113,0.0053,0.074,0.0674,False,False
+bin_dane_agirlik_gram__C22,Tek Dane Agirligi (mg),616,0.1,0.0126,-0.107,0.0076,False,False
+olcum_basak_agirlik_ham__C41,Lab Tartim C41 (mg),572,-0.099,0.0174,0.205,0.0,False,False
+ort_sap_basak_boyu__H39,Sap Basak Boyu (cm),617,-0.072,0.0724,-0.207,0.0,False,False
+ort_basak_agirlik_mg__C40,Ort. Basak Agirligi (mg),617,-0.07,0.0821,-0.183,0.0,False,False
+m2_sap_agirlik_kg__C17,Sap Agirligi (kg/m2),617,-0.045,0.2654,-0.085,0.0358,False,False
+bir_basaktaki_ort_dane_agirlik_gram__C20,Tek Basak Dane Ag. (g),617,-0.044,0.278,-0.177,0.0,False,False
+ort_dane_agirlik_mg__E40,Ort. Dane Agirligi (mg),617,-0.044,0.278,-0.177,0.0,False,False
+ort_sap_boy_cm__J39,Toplam Sap Boyu (cm),617,-0.031,0.4442,-0.137,0.0007,False,False
+ort_basak_uzunluk_cm__B40,Ort. Basak Uzunlugu (cm),617,-0.027,0.5104,-0.203,0.0,False,False
+m2_basak_sayisi__C12,1m2 Basak Sayisi,587,0.026,0.5318,0.022,0.5946,False,False
+ort_sap_basak_alti_boyu__I39,Sap Alt Boyu (cm),617,-0.025,0.534,-0.118,0.0034,False,False
+olcum_alani_basak__C11,Olcum Alani Basak Sayisi,579,0.021,0.6086,0.327,0.0,False,True
+dane_m2_hesap_gram__C21,C21 Verim (g/m²),578,0.015,0.718,-0.136,0.001,False,False
