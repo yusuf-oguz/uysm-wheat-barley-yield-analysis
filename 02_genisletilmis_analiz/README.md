@@ -1,31 +1,40 @@
-# Genişletilmiş Analiz — Staj Sonrası Devam Çalışması
+# Extended Analysis: The Continuation After the Internship
 
-> Bu, iki aşamalı çalışmanın **ikinci/genişletilmiş aşaması**. Genel bakış ve ilk aşama için → [üst dizin README](../README.md).
+> This is the **second, extended stage** of a two-stage project. For the overview and the first stage, see the [parent README](../README.md).
 
-**Hazırlayan:** Yusuf Oğuz
+<details>
+<summary>🇹🇷 Türkçe özet için tıklayın</summary>
 
-Kaynak veri, ilk aşamadaki 291 dosyadan **769 (Hansay) + 291 (VERİM 3, 264'ü Hansay ile örtüşen)** dosyaya genişletildi — 79 il, ~800 benzersiz saha ölçümü. Pipeline iteratif ilerledi (`data/processed/active/hansay_processed_v1.csv` → `v8.2.csv`, ~90 ara versiyon; süreç boyunca aşılan denemeler `data/processed/archive/`'a ayrıldı).
+Kaynak veri, ilk aşamadaki 291 dosyadan **769 (Hansay) + 291 (VERİM 3, 264'ü Hansay ile örtüşen)** dosyaya genişletildi, 79 il, ~800 benzersiz saha ölçümü. Pipeline iteratif ilerledi (~90 ara versiyon), süreç boyunca aşılan denemeler ayrı bir arşiv klasörüne ayrıldı.
 
-## Nereden Başlanır
+**Öne çıkan bulgular:** başak ağırlığı ile verim arasında güçlü korelasyon (r=0.701), il bazında sap boyu ile verim arasında da güçlü ilişki (r=0.724); iki farklı hesaplama yöntemi arasında güçlü uyum (r=0.820) ama sistematik ~%12 fark; enlem/boylamla doğrudan anlamlı bir ilişki yok, bölgesel farkların iklim/sulama/çeşit gibi il-bazlı faktörlerden kaynaklandığını düşündürüyor.
 
-| Ne arıyorsun | Nereye bak |
+Detaylı bulgular, ham veri envanteri ve metodoloji dökümanları için aşağıdaki İngilizce tabloya bakılabilir.
+
+</details>
+
+The source data grew from the first stage's 291 files to **769 (the Hansay set) plus 291 (the older VERİM 3 set, 264 overlapping with Hansay)**, covering 79 provinces and roughly 800 unique field measurements. The pipeline became iterative (`data/processed/active/hansay_processed_v1.csv` through `v8.2.csv`, about 90 intermediate versions), with superseded attempts moved into `data/processed/archive/` along the way.
+
+## Where to start
+
+| Looking for | Where to look |
 |---|---|
-| **Analiz bulguları** (istatistiksel testler, korelasyonlar, grafikler) | [`output/ANALIZ_OZET.md`](output/ANALIZ_OZET.md) |
-| **Ham verinin (88 GB flash bellek) tam envanteri** — hangi klasör ne işe yaradı, hangisi kullanılmadı | [`docs/DURUM_RAPORU[eski].md`](<docs/DURUM_RAPORU[eski].md>) |
-| Aykırı değer temizliği metodolojisi | [`docs/OUTLIER_ANALIZI.md`](docs/OUTLIER_ANALIZI.md) |
-| Hangi sütunun analiz için öncelikli olduğu | [`docs/SUTUN_ONCELIK.md`](docs/SUTUN_ONCELIK.md) |
-| Veri kayıpları / eksik veri notları | [`docs/VERI_KAYIPLARI.md`](docs/VERI_KAYIPLARI.md) |
-| Excel hücre → formül eşleşmesi | [`docs/FORMUL_REFERANS.json`](docs/FORMUL_REFERANS.json) |
-| Pipeline scriptleri (çalıştırma sırası: `pipeline/` → `inspect/`) | [`scripts/`](scripts/) |
+| **Analysis findings** (statistical tests, correlations, charts) | [`output/ANALIZ_OZET.md`](output/ANALIZ_OZET.md) |
+| **Full inventory of the raw data** (the 88 GB flash drive), what each folder was used for and what wasn't | [`docs/DURUM_RAPORU[eski].md`](<docs/DURUM_RAPORU[eski].md>) |
+| Outlier-cleaning methodology | [`docs/OUTLIER_ANALIZI.md`](docs/OUTLIER_ANALIZI.md) |
+| Which columns took priority in the analysis | [`docs/SUTUN_ONCELIK.md`](docs/SUTUN_ONCELIK.md) |
+| Notes on data loss and missing data | [`docs/VERI_KAYIPLARI.md`](docs/VERI_KAYIPLARI.md) |
+| Excel cell to formula mapping | [`docs/FORMUL_REFERANS.json`](docs/FORMUL_REFERANS.json) |
+| Pipeline scripts (run order: `pipeline/` then `inspect/`) | [`scripts/`](scripts/) |
 
-## Öne Çıkan Bulgular (özet)
+## Highlights
 
-- Başak ağırlığı ile verim arasında güçlü korelasyon (r=0.701); il bazında sap boyu ile verim arasında da güçlü ilişki (r=0.724)
-- İki farklı hesaplama yöntemi (C21/D21) arasında güçlü uyum (r=0.820) ama sistematik ~%12 fark — Bland-Altman analizi ile karakterize edildi
-- Enlem/boylamla doğrudan anlamlı bir ilişki yok — bölgesel farkların iklim/sulama/çeşit gibi il-bazlı kümelenen faktörlerden kaynaklandığını düşündürüyor
+- Ear weight correlates strongly with yield (r=0.701); at the province level, stem length also correlates strongly with yield (r=0.724).
+- The two different yield-calculation methods (C21/D21) agree strongly (r=0.820), but with a systematic ~12% offset, characterized with a Bland-Altman analysis.
+- Latitude and longitude show no direct significant relationship with yield, suggesting the regional differences come from province-level factors like climate, irrigation, and variety rather than raw geographic position.
 
-Tam detay ve tüm görseller için → [`output/ANALIZ_OZET.md`](output/ANALIZ_OZET.md)
+Full detail and every chart: see [`output/ANALIZ_OZET.md`](output/ANALIZ_OZET.md).
 
-## Not
+## Note
 
-`data/`, `output/`, `docs/` altındaki dosyaların çoğu TARBİL/İTÜ UHUZAM'ın sahada topladığı kurumsal veriden türetilmiştir — bkz. üst dizin README'sindeki gizlilik/mülkiyet notu.
+Most of the files under `data/`, `output/`, and `docs/` are derived from institutional data collected in the field by TARBİL/İTÜ UHUZAM. See the privacy and ownership note in the parent README.

@@ -1,50 +1,59 @@
-# UYSM — Buğday/Arpa Verim Tahmini: Saha Verisi Analizi
+# UYSM: Wheat and Barley Yield Analysis from Field Data
+
+<details>
+<summary>🇹🇷 Türkçe özet için tıklayın</summary>
 
 TARBİL (Tarımsal İzleme ve Bilgi Sistemi) kapsamında toplanan Türkiye geneli buğday/arpa saha ölçüm verisinin işlenmesi ve analizi. İTÜ'de staj (2026 bahar) sürecinde başlayıp, staj sonrasında bağımsız olarak genişletilerek devam ettirilmiş bir çalışma.
 
-**Bu repo private tutuluyor.** Veri, TARBİL/İTÜ UHUZAM ve proje yürütücülerinin (Necmettin Türkoğlu, Serdar Bağış) sahada topladığı kurumsal saha verisidir — kullanıcının kendi ürettiği bir veri değildir. Bu nedenle, verinin/metodolojinin yayın izni netleşmeden repo public yapılmıyor.
+**Bu repo private tutuluyor.** Veri, TARBİL/İTÜ UHUZAM ve proje yürütücülerinin (Necmettin Türkoğlu, Serdar Bağış) sahada topladığı kurumsal saha verisi, kullanıcının kendi ürettiği bir veri değil. Bu nedenle veri/metodolojinin yayın izni netleşmeden repo public yapılmıyor.
 
----
+**İki aşama:** `01_ilk_pipeline/` (staj döneminde yapılan ilk çalışma, 291 Excel dosyasından tek bir analiz-hazır CSV üreten 14 adımlık ETL) ve `02_genisletilmis_analiz/` (staj sonrası bağımsız devam çalışması, veri seti 79 il/~800 ölçüme genişletildi, 7 kategoride gerçek istatistiksel analiz eklendi).
 
-## İki Aşama
+88 GB'lık ham flash bellek dökümü ve 2 akademik referans PDF bu repoya dahil değil (nedenleri aşağıda İngilizce bölümde).
 
-Çalışma kronolojik olarak iki aşamadan oluşuyor:
+</details>
 
-### `01_ilk_pipeline/` — Staj döneminde yapılan ilk çalışma
+Processing and analysis of wheat and barley field measurement data collected across Türkiye under TARBİL (Tarımsal İzleme ve Bilgi Sistemi, the National Agricultural Monitoring and Information System). The work started during an internship at İTÜ (spring 2026) and kept growing independently afterward.
 
-291 saha ölçüm Excel dosyasından (`UYSM-EXECELL HESAPLAMALARI 0-300 DOSYA/`), analiz için hazır tek bir CSV üreten 14 adımlık ETL pipeline'ı. 239 kayıt analize dahil edilebilir kalitede. Detaylar için → [`01_ilk_pipeline/README.md`](01_ilk_pipeline/README.md).
+**This repo is kept private.** The data was collected in the field by TARBİL, İTÜ UHUZAM, and the project's principal investigators (Necmettin Türkoğlu, Serdar Bağış). It isn't self-generated data, so the repo stays private until permission to publish the data and methodology is confirmed.
 
-**Bu klasör, İTÜ staj raporunun (bkz. `Staj1` projesi) anlattığı çalışmanın karşılığıdır** — ancak rapor bu çalışmanın yalnızca ilk yarısını kapsar; asıl devamı aşağıdaki `02_genisletilmis_analiz/`'de.
+## Two stages
 
-### `02_genisletilmis_analiz/` — Staj sonrası bağımsız devam çalışması
+The work happened in two chronological stages.
 
-Kaynak veri 291 dosyadan **769+291 dosyaya (Hansay + eski VERİM 3 seti, 264'ü örtüşen)** genişletildi — 79 il, ~800 benzersiz saha ölçümü. Pipeline artık iteratif (`hansay_processed_v1` → `v8.2`, ~90 ara versiyon). Üzerine **7 kategoride gerçek istatistiksel analiz** eklendi: tanımlayıcı istatistik, il bazlı coğrafi dağılım, ölçüm-alanı etkisi, başak morfolojisi, verim bileşen analizi, sap boyu ilişkisi, enlem/boylam korelasyonu (Spearman, Kruskal-Wallis, Bland-Altman testleri dahil).
+### `01_ilk_pipeline/`: the internship-era work
 
-Ana bulgular özeti → [`02_genisletilmis_analiz/output/ANALIZ_OZET.md`](02_genisletilmis_analiz/output/ANALIZ_OZET.md)
-Ham verinin (88 GB flash bellek dökümü) tam envanteri → [`02_genisletilmis_analiz/docs/DURUM_RAPORU[eski].md`](<02_genisletilmis_analiz/docs/DURUM_RAPORU[eski].md>)
+A 14-step ETL pipeline turning 291 field-measurement Excel files (`UYSM-EXECELL HESAPLAMALARI 0-300 DOSYA/`) into one analysis-ready CSV, with 239 records clean enough to include. See [`01_ilk_pipeline/README.md`](01_ilk_pipeline/README.md) for the details.
 
----
+**This folder is what the İTÜ internship report (see the `internship1-tarbil` project) describes.** That report only covers the first half of this work; the real continuation is in `02_genisletilmis_analiz/` below.
 
-## Ham Veri Notu
+### `02_genisletilmis_analiz/`: the independent continuation after the internship
 
-Bu repo yalnızca **kod, dokümantasyon ve pipeline'dan geçmiş ara/işlenmiş veriyi** içerir. Aşağıdakiler repoya dahil değildir:
+The source data grew from 291 files to **769 plus 291 (the Hansay set plus the older VERİM 3 set, 264 overlapping)**, covering 79 provinces and roughly 800 unique field measurements. The pipeline became iterative (`hansay_processed_v1` through `v8.2`, about 90 intermediate versions). On top of that, **real statistical analysis across 7 categories** was added: descriptive statistics, province-level geographic distribution, measurement-area effects, ear morphology, yield component analysis, stem length relationships, and latitude/longitude correlation (including Spearman, Kruskal-Wallis, and Bland-Altman tests).
 
-- **88 GB'lık ham flash bellek dökümü** (`uysm_flash_bellek_degistirilmemis/`) — saha fotoğrafları, İTÜ UHUZAM uydu sınıflandırma shapefile'ları, TARBİL'in resmi verim raporları. Salt okunur kaynak olarak yerelde tutuluyor, harici diske yedeklenecek.
-- **2 akademik referans PDF** (`ekstra_kaynaklar/`) — Springer kitap bölümü (Üstündağ, KLR modeli) ve TARBİL agro-meteoroloji makalesi. Telif hakkı olan üçüncü taraf yayın; kaynakça olarak burada anılıyor, dosya olarak dahil edilmiyor.
+Summary of the main findings: [`02_genisletilmis_analiz/output/ANALIZ_OZET.md`](02_genisletilmis_analiz/output/ANALIZ_OZET.md)
+Full inventory of the raw data (the 88 GB flash drive dump): [`02_genisletilmis_analiz/docs/DURUM_RAPORU[eski].md`](<02_genisletilmis_analiz/docs/DURUM_RAPORU[eski].md>)
 
-## Bilinen Fazlalık Dosyalar (silinmedi, disk alanı gerekirse silinebilir)
+## A note on raw data
 
-İki dosya, yanlarındaki klasörlerin **byte-birebir doğrulanmış** (diff ile kontrol edildi) tam yedek kopyası — hiçbir ek bilgi taşımıyorlar, sadece disk yeri kaplıyorlar:
+This repo holds only **code, documentation, and the intermediate/processed data the pipeline produced.** It deliberately excludes:
 
-1. `UYSM_PROJECTS/UYSM_Project_2/yusuf_oguz_calismalari.zip` (30 MB) — bu repo'nun `02_genisletilmis_analiz/` klasörünün eski bir zip yedeği (repo'nun bir üst dizininde, dışında duruyor).
-2. `01_ilk_pipeline/data/processed/Koordinati Hatali Veriler.zip` (~500 KB) — yanındaki `Koordinati Hatali Veriler/` klasörünün zip yedeği.
+- **The 88 GB raw flash drive dump** (`uysm_flash_bellek_degistirilmemis/`): field photos, İTÜ UHUZAM satellite classification shapefiles, TARBİL's official yield reports. Kept locally as a read-only source, to be backed up externally.
+- **2 academic reference PDFs** (`ekstra_kaynaklar/`): a Springer book chapter (Üstündağ, on the KLR model) and a TARBİL agro-meteorology paper. Both are copyrighted third-party publications, cited here as references rather than included as files.
 
-Her ikisi de `.gitignore` ile bu repodan hariç tutuldu (versiyon kontrolüne gerek yok), ama diskten silinmedi.
+## Known redundant files (not deleted, safe to remove if disk space is needed)
 
-## Path Uyarısı
+Two files are full, byte-for-byte verified (checked with `diff`) backup copies of the folders next to them. They carry no extra information, just disk space:
 
-Her iki aşamadaki scriptler (`scripts/pipeline/`, `scripts/inspect/`), o an çalıştırıldıkları ortama özgü **sabit (absolute) Windows yolları** içeriyor (`D:\_Development\Projects\...`). Bunlar tek seferlik çalıştırılmış analiz/ETL scriptleri olduğu için olduğu gibi bırakıldı — projeyi yeniden çalıştırmak isteyen biri (veya ileride kendisi) önce bu sabit yolları güncellemeli. Kod, üretilen pipeline mantığını ve analiz metodolojisini göstermek amacıyla burada; birebir yeniden-çalıştırılabilirlik hedeflenmedi.
+1. `uysm-wheat-barley-yield-analysis/UYSM_Project_2/yusuf_oguz_calismalari.zip` (30 MB): an old zip backup of this repo's `02_genisletilmis_analiz/` folder, sitting one level above the repo itself.
+2. `01_ilk_pipeline/data/processed/Koordinati Hatali Veriler.zip` (about 500 KB): a zip backup of the folder next to it.
 
-## Kullanılan Araçlar
+Both are excluded from this repo via `.gitignore` (no need for version control on them), but neither has been deleted from disk.
 
-Python — `pandas`, `openpyxl`, `geopandas`/`shapely` (coğrafi doğrulama), `folium` (interaktif harita), `matplotlib`/`seaborn` (grafikler), `scipy` (istatistiksel testler).
+## A note on paths
+
+The scripts in both stages (`scripts/pipeline/`, `scripts/inspect/`) contain **absolute Windows paths** (`D:\_Development\Projects\...`) specific to where they were originally run. These were left as-is, since they're one-off analysis and ETL scripts rather than a package meant to be re-run elsewhere. Anyone wanting to actually re-run this pipeline (including a future version of me) would need to update those paths first. The code is here to show the pipeline logic and analysis methodology, not for turnkey re-execution.
+
+## Tools
+
+Python: `pandas`, `openpyxl`, `geopandas`/`shapely` for geographic validation, `folium` for interactive maps, `matplotlib`/`seaborn` for charts, `scipy` for statistical tests.

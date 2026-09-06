@@ -1,41 +1,44 @@
-# UYSM Projesi — Tarla Ölçüm Verisi ETL Pipeline
+# UYSM Field Measurement ETL Pipeline
 
-> Bu, iki aşamalı çalışmanın **ilk aşaması**. Genel bakış ve devamı için → [üst dizin README](../README.md).
+> This is the **first stage** of a two-stage project. For the overview and what came next, see the [parent README](../README.md).
 
-**Hazırlayan:** Yusuf Oğuz  
-**Dönem:** 2026 Bahar — Staj / Araştırma Projesi  
-**Son güncelleme:** 2026-04-01
+<details>
+<summary>🇹🇷 Türkçe özet için tıklayın</summary>
 
----
+Türkiye genelindeki istasyonlardan toplanan buğday/arpa saha ölçüm verilerini, tarımsal rekolte tahmini için işlemeye yönelik bir ETL pipeline'ı. Ham veri: 291 adet Excel dosyası, her biri bir istasyonun tek ölçüm gününü temsil ediyor (GPS koordinatı, istasyon kodu, tarih, bitki türü, 10 başak ölçümü, iki farklı yöntemle hesaplanmış dane ağırlığı).
 
-## Projenin Amacı
+14 adımlık pipeline, hepsi tek bir birleşik CSV'ye (`UYSM_merged.csv`) çıkıyor: veri çıkarma, hesap doğrulama, aykırı değer analizi, koordinat inceleme, il eşleştirme, tekrar kontrolü, Hansay verisiyle zenginleştirme, son standardizasyon, istatistiksel analiz. 291 kayıttan 239'u analize dahil edilebilir kalitede (44'ü Türkiye sınırları dışı koordinat, 20'si hesap hatası tespit edilip düzeltilmiş, 4'ü koordinatsız, 4'ü veri hatası).
 
-Bu proje; tarımsal rekolte tahmini amacıyla Türkiye genelindeki istasyonlardan toplanan buğday ve arpa saha ölçüm verilerini işlemek için geliştirilmiştir.
+İki gerçek hesap hatası bulunup düzeltildi: 12 dosyada bir Excel formülü yerine sabit bir değer kalmış (hesap 10-25 kat küçük çıkıyordu), 8 dosyada 10 yerine 9 başak ölçümü girilmiş (Excel yine de 10'a bölüyordu). Ham koordinatlar Excel'de tam sayı formatında (ör. `3643467` → `36.43467°`), Türkiye il sınırlarına karşı (11 km buffer ile) doğrulandı.
 
-Ham veri kaynağı: `data/source/UYSM-EXECELL HESAPLAMALARI 0-300 DOSYA/` klasöründe yer alan **291 adet Excel (.xlsx) dosyası**. Her dosya, bir istasyona ait tek bir ölçüm gününü temsil eder ve şunları içerir:
+</details>
 
-- GPS koordinatları (enlem/boylam, ham tam sayı formatında)
-- İstasyon kodu ve ölçüm tarihi
-- Bitki türü ve çeşit adı
-- 10 adet bireysel başak ölçümü (kılçıklı ve dane ağırlıkları, mg)
-- 1 m²'deki başak sayısı
-- İki farklı yöntemle hesaplanmış dane ağırlığı (HESAP ve GERÇEK, g/m²)
-- Bitki ve başak boyu ölçümleri
+## What this pipeline does
 
-Pipeline çıktısı: analiz için hazır, kalite bayrakları eklenmiş tek bir birleşik CSV → `data/processed/UYSM_merged.csv`
+Built to process wheat and barley field measurement data collected from stations across Türkiye, for crop yield estimation.
 
----
+The raw data source is **291 Excel (.xlsx) files** under `data/source/UYSM-EXECELL HESAPLAMALARI 0-300 DOSYA/`. Each file represents one measurement day at one station, and contains:
 
-## Klasör Yapısı
+- GPS coordinates (latitude/longitude, in a raw integer format)
+- Station code and measurement date
+- Crop type and variety name
+- 10 individual ear measurements (awned-ear and grain weight, in mg)
+- Ear count per square meter
+- Grain weight computed two different ways (labeled HESAP/"calculated" and GERÇEK/"actual", in g/m²)
+- Plant and ear height measurements
+
+The pipeline's output is one consolidated, quality-flagged CSV ready for analysis: `data/processed/UYSM_merged.csv`.
+
+## Folder structure
 
 ```
-UYSM_Projects/
+01_ilk_pipeline/
 ├── README.md
 ├── .claude/
-│   └── settings.json              # Claude Code izin ayarları
+│   └── settings.json               Claude Code permission settings
 │
 ├── scripts/
-│   ├── pipeline/                  # Ana ETL pipeline (çalıştırma sırası aşağıda)
+│   ├── pipeline/                   The main ETL pipeline, run in the order below
 │   │   ├── extract_data.py
 │   │   ├── verify_calculations.py
 │   │   ├── check_anomalies.py
@@ -51,7 +54,7 @@ UYSM_Projects/
 │   │   ├── analyze_dane.py
 │   │   └── kopyala_hatali_koordinatlar.py
 │   │
-│   ├── viz/                       # Görselleştirme scriptleri
+│   ├── viz/                        Visualization scripts
 │   │   ├── create_map.py
 │   │   ├── create_validity_map.py
 │   │   ├── visualize.py
@@ -59,7 +62,7 @@ UYSM_Projects/
 │   │   ├── hansay_ilk_gorsel.py
 │   │   └── hansay_ilk_temiz_harita.py
 │   │
-│   └── inspect/                   # Tek seferlik inceleme / debug scriptleri
+│   └── inspect/                    One-off inspection and debug scripts
 │       ├── inspect_structure.py
 │       ├── inspect_formulas.py
 │       ├── inspect_formulas2.py
@@ -70,174 +73,160 @@ UYSM_Projects/
 │       └── read_docx.py
 │
 ├── data/
-│   ├── source/                    # Ham kaynak veriler (değiştirilmez)
-│   │   ├── UYSM-EXECELL HESAPLAMALARI 0-300 DOSYA/   # 291 xlsx dosyası
-│   │   ├── hansay.xlsx            # Hansay istasyon listesi (güncel)
-│   │   ├── hansay_ilk.xls         # Hansay istasyon listesi (ilk versiyon)
-│   │   └── uysm ek veri.pdf       # Ek referans belgesi
+│   ├── source/                     Raw source data (untouched)
+│   │   ├── UYSM-EXECELL HESAPLAMALARI 0-300 DOSYA/   291 xlsx files
+│   │   ├── hansay.xlsx             Hansay station list, current version
+│   │   ├── hansay_ilk.xls          Hansay station list, first version
+│   │   └── uysm ek veri.pdf        Supplementary reference document
 │   │
-│   └── processed/                 # Pipeline çıktıları
-│       ├── UYSM_merged.csv        # ★ ANA ÇIKTI — 291 satır, tüm sütunlar
-│       ├── UYSM_merged_v2.csv     # Ara versiyon (Hansay verisiyle zenginleştirilmiş)
-│       ├── UYSM_hesap_kontrol.csv # Hesap doğrulama ara tablosu
+│   └── processed/                  Pipeline outputs
+│       ├── UYSM_merged.csv         The main output, 291 rows, all columns
+│       ├── UYSM_merged_v2.csv      An intermediate version enriched with Hansay data
+│       ├── UYSM_hesap_kontrol.csv  Calculation-verification intermediate table
 │       ├── hansay_koordinatlar.csv
 │       ├── hansay_ilk_koordinatlar.csv
-│       ├── Koordinati Hatali Veriler/   # Koordinatı hatalı xlsx dosyaları (kopyalanmış)
+│       ├── Koordinati Hatali Veriler/   Copies of the xlsx files with bad coordinates
 │       ├── Koordinati Hatali Veriler.zip
-│       └── sadece_bizde_24.txt    # Yalnızca bizim datasette olan 24 istasyon
+│       └── sadece_bizde_24.txt     24 stations that only appear in our dataset
 │
 ├── output/
-│   ├── maps/                      # İnteraktif HTML haritalar
-│   │   ├── UYSM_harita.html       # Tüm geçerli istasyonlar
+│   ├── maps/                       Interactive HTML maps
+│   │   ├── UYSM_harita.html         All valid stations
 │   │   ├── turkey_validity_map.html
 │   │   ├── hansay_harita.html
 │   │   ├── hansay_ilk_harita.html
 │   │   ├── hansay_ilk_temiz_harita.html
 │   │   └── hansay_ilk_200_1200_harita.html
 │   │
-│   └── charts/                    # PNG grafikler
+│   └── charts/                     PNG charts
 │       ├── UYSM_dagilim.png
 │       └── UYSM_hesap_vs_gercek.png
 │
 └── docs/
-    ├── EXCEL_VERI_YAPISI.md       # Excel dosya yapısı ve hücre-sütun eşleştirmesi
-    └── HATALI_VERILER.txt         # Tespit edilen tüm veri sorunlarının kayıtı
+    ├── EXCEL_VERI_YAPISI.md        Excel file structure and cell-to-column mapping
+    └── HATALI_VERILER.txt          A record of every data issue found
 ```
 
----
+## Pipeline flow
 
-## Pipeline Akışı
-
-Scriptler bu sırayla çalıştırılmıştır:
+The scripts were run in this order:
 
 ```
-1. extract_data.py          → 291 xlsx dosyasından ham veri çıkarır → UYSM_merged.csv (ilk versiyon)
-2. verify_calculations.py   → Excel hesaplarını ham veriyle karşılaştırır → UYSM_hesap_kontrol.csv
-3. check_anomalies.py       → Uç değer ve tutarsızlık analizi
-4. explore_coords.py        → Koordinat dağılımını inceler, sorunluları işaretler
-5. add_city_columns.py      → Shapefile ile il eşleştirmesi ekler
-6. update_city_columns.py   → İl sütunlarını günceller (buffer analizi ile)
-7. check_city_match.py      → İstasyon kodu ↔ koordinat il uyumsuzluklarını saptar
-8. duplicate_incele.py      → Tekrarlayan kayıtları inceler
-9. build_merged_v2.py       → Hansay verisiyle zenginleştirilmiş v2 oluşturur
-10. update_merged2.py       → v2 üzerinde ek güncellemeler
-11. build_unified_csv.py    → Tüm doğrulama sütunlarını birleştirip analiz_durumu ekler
-12. finalize_data.py        → Son temizlik ve sütun standardizasyonu
-13. analyze_dane.py         → İstatistiksel analiz (bitki türü bazında)
-14. kopyala_hatali_koordinatlar.py → Koordinatı hatalı dosyaları ayrı klasöre kopyalar
+1. extract_data.py           Extracts raw data from the 291 xlsx files -> UYSM_merged.csv (first version)
+2. verify_calculations.py    Compares Excel's own calculations against the raw data -> UYSM_hesap_kontrol.csv
+3. check_anomalies.py        Outlier and inconsistency analysis
+4. explore_coords.py         Examines the coordinate distribution, flags problems
+5. add_city_columns.py       Adds a province match via shapefile
+6. update_city_columns.py    Updates the province columns (with buffer analysis)
+7. check_city_match.py       Detects station-code vs. coordinate-province mismatches
+8. duplicate_incele.py       Reviews duplicate records
+9. build_merged_v2.py        Builds a v2 enriched with Hansay data
+10. update_merged2.py        Further updates on top of v2
+11. build_unified_csv.py     Merges all validation columns, adds a status column
+12. finalize_data.py         Final cleanup and column standardization
+13. analyze_dane.py          Statistical analysis, by crop type
+14. kopyala_hatali_koordinatlar.py   Copies files with bad coordinates into a separate folder
 ```
 
-Görselleştirme (bağımsız, pipeline'dan sonra):
+Visualization (independent, run after the pipeline):
 ```
-viz/create_map.py             → UYSM_harita.html (folium, interaktif)
-viz/create_validity_map.py    → turkey_validity_map.html (koordinat geçerlilik haritası)
-viz/visualize.py              → PNG grafikler
-viz/hansay_*.py               → Hansay verisi görselleştirmeleri
+viz/create_map.py             -> UYSM_harita.html (interactive, via folium)
+viz/create_validity_map.py    -> turkey_validity_map.html (coordinate validity map)
+viz/visualize.py              -> PNG charts
+viz/hansay_*.py                -> Hansay data visualizations
 ```
 
----
+## Main output: `UYSM_merged.csv` columns
 
-## Ana Çıktı: `UYSM_merged.csv` Sütunları
+| Column | Source | Description |
+|---|---|---|
+| `dosya_adi` | File name | The source xlsx file |
+| `rapor_no` | Cell J4 | Report number |
+| `istasyon_no` | Cell C6 | Province code + station (e.g. `16.03`) |
+| `tarih` | Cell C5 | Measurement date |
+| `bitki_adi` | Cell C9 | `bugday` (wheat) or `arpa` (barley) |
+| `cesit_adi` | Cell C10 | Variety name |
+| `enlem` | Cell E3, converted | Latitude, decimal degrees |
+| `boylam` | Cell E4, converted | Longitude, decimal degrees |
+| `m2_basak_sayisi` | Cell C12 | Ears per square meter |
+| `xls_hesap_gram` | Cell C21 | Excel's HESAP-method grain weight (g/m²) |
+| `xls_gercek_gram` | Cell D21 | Excel's GERÇEK-method grain weight (g/m²) |
+| `duzeltilmis_hesap_gram` | Recomputed from raw rows | HESAP, recalculated in Python |
+| `duzeltilmis_gercek_gram` | Recomputed from raw rows | GERÇEK, recalculated in Python |
+| `ortalama_bitki_boyu_cm` | Cell C23 | Plant height, cm |
+| `ortalama_basak_boyu_cm` | Cell C24 | Ear height, cm |
+| `analiz_durumu` | Computed | See below |
+| `duzeltme_notu` | Computed | Why a record was corrected |
+| `analize_dahil` | Computed | True/False filter column |
 
-| Sütun | Kaynak | Açıklama |
-|-------|--------|----------|
-| `dosya_adi` | Dosya adı | Kaynak xlsx dosyası |
-| `rapor_no` | J4 hücresi | Rapor numarası |
-| `istasyon_no` | C6 hücresi | İl kodu + istasyon (örn. `16.03`) |
-| `tarih` | C5 hücresi | Ölçüm tarihi |
-| `bitki_adi` | C9 hücresi | `bugday` / `arpa` |
-| `cesit_adi` | C10 hücresi | Çeşit adı |
-| `enlem` | E3 hücresi (dönüştürülmüş) | Ondalık derece |
-| `boylam` | E4 hücresi (dönüştürülmüş) | Ondalık derece |
-| `m2_basak_sayisi` | C12 hücresi | 1 m²'deki başak sayısı |
-| `xls_hesap_gram` | C21 hücresi | Excel'in HESAP yöntemi dane ağırlığı (g/m²) |
-| `xls_gercek_gram` | D21 hücresi | Excel'in GERÇEK yöntemi dane ağırlığı (g/m²) |
-| `duzeltilmis_hesap_gram` | Ham satırlardan | Python'da yeniden hesaplanmış HESAP |
-| `duzeltilmis_gercek_gram` | Ham satırlardan | Python'da yeniden hesaplanmış GERÇEK |
-| `ortalama_bitki_boyu_cm` | C23 hücresi | Bitki boyu (cm) |
-| `ortalama_basak_boyu_cm` | C24 hücresi | Başak boyu (cm) |
-| `analiz_durumu` | Hesaplanmış | Bkz. aşağı |
-| `duzeltme_notu` | Hesaplanmış | Neden düzeltildiği |
-| `analize_dahil` | Hesaplanmış | True/False filtre sütunu |
+### `analiz_durumu` values
 
-### `analiz_durumu` Değerleri
+| Value | Records | Meaning |
+|---|---|---|
+| `kullanilabilir` | 219 | Clean, needed no correction |
+| `duzeltilmis` | 20 | An error was found and recalculated from raw data |
+| `koordinat_disi` | 44 | Coordinate falls outside Türkiye's borders |
+| `koordinat_yok` | 4 | Coordinate cell was empty |
+| `veri_hatasi` | 4 | Template file or a C41 inconsistency |
+| **Total** | **291** | |
 
-| Değer | Kayıt Sayısı | Anlam |
-|-------|-------------|-------|
-| `kullanilabilir` | 219 | Temiz, düzeltme gerektirmemiş |
-| `duzeltilmis` | 20 | Hata tespit edildi, ham veriden yeniden hesaplandı |
-| `koordinat_disi` | 44 | Koordinat Türkiye sınırları dışında |
-| `koordinat_yok` | 4 | Koordinat hücresi boş |
-| `veri_hatasi` | 4 | Şablon dosyası veya C41 tutarsızlığı |
-| **TOPLAM** | **291** | |
+**Records included in analysis (`analize_dahil == True`): 239**
 
-**Analize dahil kayıt sayısı (`analize_dahil == True`): 239**
+## Data errors found (summary)
 
----
+Full detail: `docs/HATALI_VERILER.txt`
 
-## Tespit Edilen Veri Hataları (Özet)
+### Calculation errors (corrected)
+1. **The E39 = 948 constant bug** (12 files): the cell should hold `=SUM(E29:E38)`, but a constant `948` copied from a template survived instead. `xls_hesap_gram` came out 10 to 25 times too small. Recalculated from the raw rows.
+2. **9 ears instead of 10** (8 files): the protocol calls for 10 ear measurements, but only 9 rows were filled in these files. Since Excel always divides by 10, the average came out about 11% low. Fixed by detecting the actual filled-row count before dividing.
 
-Detaylar: `docs/HATALI_VERILER.txt`
+### Coordinate problems (excluded from analysis)
+- **5 files**: clearly impossible coordinates (Egypt, Russia, Iran)
+- **23 files**: right off the Mediterranean/Aegean coast, just outside the land boundary (not caught even with an 11 km buffer)
+- **16 files**: coordinates beyond the Syrian border (south of Gaziantep/Hatay/Şanlıurfa)
+- **4 files**: coordinate cell was empty or held text
 
-### Hesap Hataları (düzeltildi)
-1. **E39 sabit 948 hatası** (12 dosya): `=SUM(E29:E38)` formülü yerine şablondan kopyalanmış sabit `948` değeri. `xls_hesap_gram` gerçek değerden 10–25× küçük çıkıyordu. Ham veriden yeniden hesaplandı.
-2. **9 başak verisi** (8 dosya): Protokol 10 başak gerektiriyor; bu dosyalarda 9 satır dolu. Excel her zaman 10'a böldüğünden ortalama ~%11 küçük. Dolu satır sayısı tespit edilerek bölme düzeltildi.
+### Other
+- **3 files**: the C41 field-weighing value was about 7 times higher than expected (suspected unit mix-up)
+- **2 files**: the station code was most likely entered wrong (doesn't match the coordinate)
 
-### Koordinat Sorunları (analize dahil edilmedi)
-- **5 dosya**: Açıkça imkânsız koordinatlar (Mısır, Rusya, İran)
-- **23 dosya**: Akdeniz/Ege kıyısı — kara sınırının hemen açığına düşüyor (11 km buffer ile de yakalanamadı)
-- **16 dosya**: Suriye sınırı ötesi koordinatlar (Gaziantep/Hatay/Şanlıurfa güneyi)
-- **4 dosya**: Koordinat hücresi boş veya metin
+## Coordinate conversion
 
-### Diğer
-- **3 dosya**: `C41` tarla tartım değeri beklenen değerden ~7× yüksek (birim karışıklığı şüphesi)
-- **2 dosya**: İstasyon kodu büyük ihtimalle yanlış girilmiş (koordinatla eşleşmiyor)
-
----
-
-## Koordinat Dönüşümü
-
-Ham koordinatlar Excel'de tam sayı olarak girilmiş:
+The raw coordinates were entered into Excel as plain integers:
 
 ```
 decimal = raw_int / 10^(len(str(raw_int)) - 2)
 ```
 
-Örnekler:
-- `3643467` (7 basamak) → `3643467 / 10^5` = **36.43467°**
-- `35150`   (5 basamak) → `35150 / 10^3`   = **35.150°**
-- `37435578` (8 basamak) → `37435578 / 10^6` = **37.435578°**
+Examples:
+- `3643467` (7 digits) -> `3643467 / 10^5` = **36.43467°**
+- `35150` (5 digits) -> `35150 / 10^3` = **35.150°**
+- `37435578` (8 digits) -> `37435578 / 10^6` = **37.435578°**
 
----
-
-## Coğrafi Doğrulama
+## Geographic validation
 
 - Shapefile: `D:\_Development\Datasets\Turkey Shapefile\gadm41_TUR_shp\gadm41_TUR_1.shp`
-- Her koordinat Türkiye il sınırlarına karşı kontrol edildi (standart + 11 km buffer)
-- Kıyı sınırına yakın düşen meşru istasyonlar buffer ile kurtarıldı
+- Every coordinate was checked against Türkiye's provincial borders (standard boundary plus an 11 km buffer)
+- Legitimate coastal stations that fell just outside the strict boundary were recovered by the buffer
 
----
+## Python libraries used
 
-## Kullanılan Python Kütüphaneleri
+| Library | Purpose |
+|---|---|
+| `openpyxl` | Reading raw data from the xlsx files |
+| `pandas` | Data processing and analysis |
+| `geopandas` | Analysis against the Türkiye border shapefile |
+| `folium` | Interactive HTML map generation |
+| `matplotlib` / `seaborn` | Charts |
+| `shapely` | Buffer geometry calculations |
 
-| Kütüphane | Kullanım Amacı |
-|-----------|----------------|
-| `openpyxl` | xlsx dosyalarından ham veri okuma |
-| `pandas` | Veri işleme ve analiz |
-| `geopandas` | Türkiye sınır shapefile analizi |
-| `folium` | İnteraktif HTML harita üretimi |
-| `matplotlib` / `seaborn` | Grafikler |
-| `shapely` | Buffer geometri hesapları |
+Environment: `D:\_Development\Tools\base_env` (all libraries installed there)
 
-Ortam: `D:\_Development\Tools\base_env` (tüm kütüphaneler kurulu)
+## Notes
 
----
-
-## Önemli Notlar
-
-- **Analizde tercih edilen sütun:** `duzeltilmis_gercek_gram` — tartıma dayalı, daha güvenilir
-- **Filtreleme:** `analize_dahil == True` → 239 kayıt
-- Script path'leri `D:\_Development\Projects\UYSM_Projects\` tabanını kullanır
-- Shapefile bağımlılığı (`D:\_Development\Datasets\...`) bazı scriptler için gereklidir
-- Excel dosyaları formatı için → `docs/EXCEL_VERI_YAPISI.md`
-- Tüm hata detayları için → `docs/HATALI_VERILER.txt`
+- **The preferred column for analysis is `duzeltilmis_gercek_gram`**, since it's weighing-based and more reliable.
+- **Filter:** `analize_dahil == True` gives 239 records.
+- The scripts' paths are rooted at `D:\_Development\Projects\UYSM_Projects\`.
+- The shapefile dependency (`D:\_Development\Datasets\...`) is required by some scripts.
+- Excel file format: see `docs/EXCEL_VERI_YAPISI.md`.
+- Full error detail: see `docs/HATALI_VERILER.txt`.
