@@ -33,6 +33,8 @@ The pipeline's output is one consolidated, quality-flagged CSV ready for analysi
 
 ## Folder structure
 
+`data/source/`, `data/processed/`, and `output/maps/` are git-ignored (real institutional field data, see the [parent README](../README.md#a-note-on-raw-data)) and only exist locally. The tree below documents the full local layout the pipeline expects.
+
 ```
 01_ilk_pipeline/
 ├── README.md

@@ -9,7 +9,7 @@ TARBİL (Tarımsal İzleme ve Bilgi Sistemi) kapsamında toplanan Türkiye genel
 
 **İki aşama:** `01_ilk_pipeline/` (staj döneminde yapılan ilk çalışma, 291 Excel dosyasından tek bir analiz-hazır CSV üreten 14 adımlık ETL) ve `02_genisletilmis_analiz/` (staj sonrası bağımsız devam çalışması, veri seti 79 il/~800 ölçüme genişletildi, 7 kategoride gerçek istatistiksel analiz eklendi).
 
-88 GB'lık ham flash bellek dökümü ve 2 akademik referans PDF bu repoya dahil değil (nedenleri aşağıda İngilizce bölümde).
+88 GB'lık ham flash bellek dökümü ve 2 akademik referans PDF bu repoya hiç dahil değil. Ayrıca TARBİL/İTÜ UHUZAM'a ait ham/işlenmiş saha verisi, koordinat haritaları ve kurumsal belgelerden çıkarılan görseller kurum onayı alınana kadar git geçmişinden tamamen temizlendi (nedenleri aşağıda İngilizce bölümde).
 
 </details>
 
@@ -34,14 +34,14 @@ A 14-step ETL pipeline turning 291 field-measurement Excel files (`UYSM-EXECELL 
 The source data grew from 291 files to **769 plus 291 (the Hansay set plus the older VERİM 3 set, 264 overlapping)**, covering 79 provinces and roughly 800 unique field measurements. The pipeline became iterative (`hansay_processed_v1` through `v8.2`, about 90 intermediate versions). On top of that, **real statistical analysis across 7 categories** was added: descriptive statistics, province-level geographic distribution, measurement-area effects, ear morphology, yield component analysis, stem length relationships, and latitude/longitude correlation (including Spearman, Kruskal-Wallis, and Bland-Altman tests).
 
 Summary of the main findings: [`02_genisletilmis_analiz/output/ANALIZ_OZET.md`](02_genisletilmis_analiz/output/ANALIZ_OZET.md)
-Full inventory of the raw data (the 88 GB flash drive dump): [`02_genisletilmis_analiz/docs/DURUM_RAPORU[eski].md`](<02_genisletilmis_analiz/docs/DURUM_RAPORU[eski].md>)
 
 ## A note on raw data
 
-This repo holds only **code, documentation, and the intermediate/processed data the pipeline produced.** It deliberately excludes:
+This repo holds only **code, documentation, and aggregate/statistical output.** It deliberately excludes:
 
-- **The 88 GB raw flash drive dump** (`uysm_flash_bellek_degistirilmemis/`): field photos, İTÜ UHUZAM satellite classification shapefiles, TARBİL's official yield reports. Kept locally as a read-only source, to be backed up externally.
-- **2 academic reference PDFs** (`ekstra_kaynaklar/`): a Springer book chapter (Üstündağ, on the KLR model) and a TARBİL agro-meteorology paper. Both are copyrighted third-party publications, cited here as references rather than included as files.
+- **The 88 GB raw flash drive dump** (`uysm_flash_bellek_degistirilmemis/`, kept outside this repo entirely): field photos, İTÜ UHUZAM satellite classification shapefiles, TARBİL's official yield reports. Kept locally as a read-only source, to be backed up externally.
+- **2 academic reference PDFs** (`ekstra_kaynaklar/`, kept outside this repo entirely): a Springer book chapter (Üstündağ, on the KLR model) and a TARBİL agro-meteorology paper. Both are copyrighted third-party publications, cited here as references rather than included as files.
+- **Institutional field data, git-ignored and purged from this repo's git history.** The underlying measurement data belongs to TARBİL/İTÜ UHUZAM, not to me, so it stays out until the institution approves publishing it. This covers, in both pipeline stages: the raw source spreadsheets and PDFs, all processed/intermediate CSVs, the interactive HTML coordinate maps, the province-level yield reference tables, images extracted from institutional Word documents, and one detailed data-inventory document (`DURUM_RAPORU[eski].md`). What's left in the repo (code, methodology docs, and aggregate statistical charts/summaries) is legible and complete on its own.
 
 ## Known redundant files (not deleted, safe to remove if disk space is needed)
 

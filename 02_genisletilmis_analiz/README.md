@@ -22,7 +22,6 @@ The source data grew from the first stage's 291 files to **769 (the Hansay set) 
 | Looking for | Where to look |
 |---|---|
 | **Analysis findings** (statistical tests, correlations, charts) | [`output/ANALIZ_OZET.md`](output/ANALIZ_OZET.md) |
-| **Full inventory of the raw data** (the 88 GB flash drive), what each folder was used for and what wasn't | [`docs/DURUM_RAPORU[eski].md`](<docs/DURUM_RAPORU[eski].md>) |
 | Outlier-cleaning methodology | [`docs/OUTLIER_ANALIZI.md`](docs/OUTLIER_ANALIZI.md) |
 | Which columns took priority in the analysis | [`docs/SUTUN_ONCELIK.md`](docs/SUTUN_ONCELIK.md) |
 | Notes on data loss and missing data | [`docs/VERI_KAYIPLARI.md`](docs/VERI_KAYIPLARI.md) |
@@ -39,4 +38,4 @@ Full detail and every chart: see [`output/ANALIZ_OZET.md`](output/ANALIZ_OZET.md
 
 ## Note
 
-Most of the files under `data/`, `output/`, and `docs/` are derived from institutional data collected in the field by TARBİL/İTÜ UHUZAM. See the privacy and ownership note in the parent README.
+`data/source/`, `data/processed/active/`, `data/processed/archive/`, `data/processed/tmp/`, `data/il_verim/`, and `data/extracted_images/` are git-ignored, since they hold institutional data collected in the field by TARBİL/İTÜ UHUZAM (or images extracted from their documents). `docs/DURUM_RAPORU[eski].md`, a detailed raw-data inventory, is excluded for the same reason. See the ownership note in the [parent README](../README.md#a-note-on-raw-data).
