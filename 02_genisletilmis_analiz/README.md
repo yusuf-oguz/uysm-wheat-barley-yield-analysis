@@ -13,6 +13,8 @@ Detaylı bulgular, ham veri envanteri ve metodoloji dökümanları için aşağ�
 
 </details>
 
+---
+
 The source data grew from the first stage's 291 files to **769 (the Hansay set) plus 291 (the older VERİM 3 set, 264 overlapping with Hansay)**, covering 79 provinces and roughly 800 unique field measurements. The pipeline became iterative (`data/processed/active/hansay_processed_v1.csv` through `v8.2.csv`, about 90 intermediate versions), with superseded attempts moved into `data/processed/archive/` along the way.
 
 ## Where to start

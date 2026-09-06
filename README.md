@@ -13,6 +13,8 @@ TARBİL (Tarımsal İzleme ve Bilgi Sistemi) kapsamında toplanan Türkiye genel
 
 </details>
 
+---
+
 Processing and analysis of wheat and barley field measurement data collected across Türkiye under TARBİL (Tarımsal İzleme ve Bilgi Sistemi, the National Agricultural Monitoring and Information System). The work started during an internship at İTÜ (spring 2026) and kept growing independently afterward.
 
 **This repo is kept private.** The data was collected in the field by TARBİL, İTÜ UHUZAM, and the project's principal investigators (Necmettin Türkoğlu, Serdar Bağış). It isn't self-generated data, so the repo stays private until permission to publish the data and methodology is confirmed.
