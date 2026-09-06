@@ -1,6 +1,20 @@
 # Byte-birebir doğrulanmış yedek zip'ler (bkz. README "Bilinen Fazlalık Dosyalar") — silinmedi, sadece git dışı
 01_ilk_pipeline/data/processed/Koordinati Hatali Veriler.zip
 
+# Kurumsal saha verisi (TARBİL/İTÜ UHUZAM) — kurum onayı olmadan public'e gitmez
+01_ilk_pipeline/data/source/
+01_ilk_pipeline/data/processed/
+01_ilk_pipeline/output/maps/
+02_genisletilmis_analiz/data/source/hansay.xlsx
+02_genisletilmis_analiz/data/source/hansay_ilk.xls
+02_genisletilmis_analiz/data/source/hansay_YC_v4.xlsx
+02_genisletilmis_analiz/data/processed/active/
+02_genisletilmis_analiz/data/processed/archive/
+02_genisletilmis_analiz/data/processed/tmp/
+02_genisletilmis_analiz/data/il_verim/
+02_genisletilmis_analiz/data/extracted_images/
+02_genisletilmis_analiz/docs/DURUM_RAPORU\[eski\].md
+
 __pycache__/
 *.pyc
 .venv/
