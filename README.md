@@ -5,11 +5,11 @@
 
 TARBİL (Tarımsal İzleme ve Bilgi Sistemi) kapsamında toplanan Türkiye geneli buğday/arpa saha ölçüm verisinin işlenmesi ve analizi. İTÜ'de staj (2026 bahar) sürecinde başlayıp, staj sonrasında bağımsız olarak genişletilerek devam ettirilmiş bir çalışma.
 
-**Bu repo private tutuluyor.** Veri, TARBİL/İTÜ UHUZAM ve proje yürütücülerinin (Necmettin Türkoğlu, Serdar Bağış) sahada topladığı kurumsal saha verisi, kullanıcının kendi ürettiği bir veri değil. Bu nedenle veri/metodolojinin yayın izni netleşmeden repo public yapılmıyor.
+**Kurum onayıyla bu repo public.** Veri, TARBİL/İTÜ UHUZAM ve proje yürütücülerinin (Necmettin Türkoğlu, Serdar Bağış) sahada topladığı kurumsal saha verisi, kullanıcının kendi ürettiği bir veri değil. Bu nedenle ham/işlenmiş saha verisi repodan tamamen çıkarıldı, sadece kod ve metodoloji paylaşılıyor.
 
 **İki aşama:** `01_ilk_pipeline/` (staj döneminde yapılan ilk çalışma, 291 Excel dosyasından tek bir analiz-hazır CSV üreten 14 adımlık ETL) ve `02_genisletilmis_analiz/` (staj sonrası bağımsız devam çalışması, veri seti 79 il/~800 ölçüme genişletildi, 7 kategoride gerçek istatistiksel analiz eklendi).
 
-88 GB'lık ham flash bellek dökümü ve 2 akademik referans PDF bu repoya hiç dahil değil. Ayrıca TARBİL/İTÜ UHUZAM'a ait ham/işlenmiş saha verisi, koordinat haritaları ve kurumsal belgelerden çıkarılan görseller kurum onayı alınana kadar git geçmişinden tamamen temizlendi (nedenleri aşağıda İngilizce bölümde).
+88 GB'lık ham flash bellek dökümü ve 2 akademik referans PDF bu repoya hiç dahil değil. Ayrıca TARBİL/İTÜ UHUZAM'a ait ham/işlenmiş saha verisi, koordinat haritaları ve kurumsal belgelerden çıkarılan görseller git geçmişinden tamamen temizlendi (nedenleri aşağıda İngilizce bölümde).
 
 </details>
 
@@ -17,7 +17,7 @@ TARBİL (Tarımsal İzleme ve Bilgi Sistemi) kapsamında toplanan Türkiye genel
 
 Processing and analysis of wheat and barley field measurement data collected across Türkiye under TARBİL (Tarımsal İzleme ve Bilgi Sistemi, the National Agricultural Monitoring and Information System). The work started during an internship at İTÜ (spring 2026) and kept growing independently afterward.
 
-**This repo is kept private.** The data was collected in the field by TARBİL, İTÜ UHUZAM, and the project's principal investigators (Necmettin Türkoğlu, Serdar Bağış). It isn't self-generated data, so the repo stays private until permission to publish the data and methodology is confirmed.
+**This repo is public, with institutional approval.** The data was collected in the field by TARBİL, İTÜ UHUZAM, and the project's principal investigators (Necmettin Türkoğlu, Serdar Bağış). It isn't self-generated data, so the raw and processed field data itself stays out of the repo entirely; only the code and methodology are shared.
 
 ## Two stages
 
@@ -41,7 +41,7 @@ This repo holds only **code, documentation, and aggregate/statistical output.** 
 
 - **The 88 GB raw flash drive dump** (`uysm_flash_bellek_degistirilmemis/`, kept outside this repo entirely): field photos, İTÜ UHUZAM satellite classification shapefiles, TARBİL's official yield reports. Kept locally as a read-only source, to be backed up externally.
 - **2 academic reference PDFs** (`ekstra_kaynaklar/`, kept outside this repo entirely): a Springer book chapter (Üstündağ, on the KLR model) and a TARBİL agro-meteorology paper. Both are copyrighted third-party publications, cited here as references rather than included as files.
-- **Institutional field data, git-ignored and purged from this repo's git history.** The underlying measurement data belongs to TARBİL/İTÜ UHUZAM, not to me, so it stays out until the institution approves publishing it. This covers, in both pipeline stages: the raw source spreadsheets and PDFs, all processed/intermediate CSVs, the interactive HTML coordinate maps, the province-level yield reference tables, images extracted from institutional Word documents, and one detailed data-inventory document (`DURUM_RAPORU[eski].md`). What's left in the repo (code, methodology docs, and aggregate statistical charts/summaries) is legible and complete on its own.
+- **Institutional field data, git-ignored and purged from this repo's git history.** The underlying measurement data belongs to TARBİL/İTÜ UHUZAM, not to me, so it stays out of the repo permanently. This covers, in both pipeline stages: the raw source spreadsheets and PDFs, all processed/intermediate CSVs, the interactive HTML coordinate maps, the province-level yield reference tables, images extracted from institutional Word documents, and one detailed data-inventory document (`DURUM_RAPORU[eski].md`). What's left in the repo (code, methodology docs, and aggregate statistical charts/summaries) is legible and complete on its own.
 
 ## Known redundant files (not deleted, safe to remove if disk space is needed)
 
