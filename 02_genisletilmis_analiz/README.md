@@ -1,4 +1,4 @@
-# Extended Analysis: The Continuation After the Internship
+# Extended Analysis: Growing the Dataset and Adding Statistical Analysis
 
 > This is the **second, extended stage** of a two-stage project. For the overview and the first stage, see the [parent README](../README.md).
 
